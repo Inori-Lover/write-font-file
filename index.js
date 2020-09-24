@@ -14,23 +14,27 @@ const endReadTxtFileTime = performance.now();
 console.log('3. read xml file');
 const beginReadXMLFileTime = performance.now();
 const xmlFilePath = path.resolve(__dirname, './res/font.xml');
-const xmlContent = fs.readFileSync(xmlFilePath, { encoding: 'utf8' });
+let xmlContent = fs.readFileSync(xmlFilePath, { encoding: 'utf8' });
 const endReadXMLFileTime = performance.now();
 
 console.log('4. replace');
 const beginReplaceTime = performance.now();
+const replaceFlag = `DONT_${Math.random().toFixed(15)}_REPLACE_ME`;
 txtContent.split(/\n/).forEach((line) => {
   let [left, right] = line.split(' ');
   left = Number.parseInt(left).toString(16);
   right = Number.parseInt(right).toString(16);
-  xmlContent.replace(`code="0x${left}"`, `code="0x${right}"`);
-  xmlContent.replace(`code="0x${right}"`, `code="0x${left}"`);
+  xmlContent = xmlContent
+    .replace(`${left}"`, `${right}${replaceFlag}"`)
+    .replace(`${right}"`, `${left}"`)
+    .replace(replaceFlag, '');
 });
 const endReplaceTime = performance.now();
 
 console.log('5. write xml file');
 const beginWriteTime = performance.now();
-fs.writeFileSync(xmlFilePath, xmlContent, { encoding: 'utf8' });
+const xmlResultFilePath = path.resolve(__dirname, './res/font.result.xml');
+fs.writeFileSync(xmlResultFilePath, xmlContent, { encoding: 'utf8' });
 const endWriteTime = performance.now();
 
 const endTime = performance.now();
