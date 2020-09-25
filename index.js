@@ -2,6 +2,33 @@ const path = require('path');
 const fs = require('fs');
 const { performance } = require('perf_hooks');
 
+// const a = `
+// <?xml version="1.0" encoding="UTF-8"?>
+// <ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.15">
+//   <head>
+//     <!-- Most of this table will be recalculated by the compiler -->
+//     <tableVersion value="1.0"/>
+//   </head>
+//   <cmap>
+//     <cmap_format_12 platformID="3" platEncID="10" format="12" reserved="0" length="1828" language="0" nGroups="151">
+//       <map code="0x44ab" name="uni44AB"/><!-- CJK UNIFIED IDEOGRAPH-44AB -->
+//       <map code="0x44ac" name="uni44AC"/><!-- CJK UNIFIED IDEOGRAPH-44AC -->
+//       <map code="0x44ad" name="uni44AD"/><!-- CJK UNIFIED IDEOGRAPH-44AD -->
+//     </cmap_format_12>
+//   </cmap>
+// </ttFont>
+// `;
+
+// const b = a
+//   .split(/(?<=map\scode\="0x[0-9a-f]{4})(?=")/)
+//   .map((line) => line.split(/(?<=map\scode\=")/))
+//   .flat(2);
+// b.forEach((line) => {
+//   console.log(line);
+//   console.log('=================');
+// });
+// process.exit(0);
+
 console.log('1. begin');
 const beginTime = performance.now();
 
