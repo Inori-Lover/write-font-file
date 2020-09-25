@@ -63,6 +63,8 @@ txtContent.split(/\n/).forEach((line) => {
   let [left, right] = line.split(' ');
   left = `0x${Number.parseInt(left).toString(16)}`;
   right = `0x${Number.parseInt(right).toString(16)}`;
+  // 文件中替换的位置可能不止一处（同一个码点可能多次出现），所以这里不进行提前break
+  // 不过如果input的xml是确定的话，可以进行一次计数，最多出现三次
   for (const _ of xmlContentInArr) {
     // 我这里可能有理解错，我理解是line的左右互换，但原来的示例代码貌似是只有左边换成右边
     // 全等操作符比 _.indexOf(left) > -1 快上一个数量级……100跟10的区别
