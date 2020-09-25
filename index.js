@@ -61,15 +61,15 @@ txtContent.split(/\n/).forEach((line) => {
   // 复用内存
   currentIndex = 0;
   let [left, right] = line.split(' ');
-  left = Number.parseInt(left).toString(16);
-  right = Number.parseInt(right).toString(16);
+  left = `0x${Number.parseInt(left).toString(16)}`;
+  right = `0x${Number.parseInt(right).toString(16)}`;
   for (const _ of xmlContentInArr) {
     // 我这里可能有理解错，我理解是line的左右互换，但原来的示例代码貌似是只有左边换成右边
     // 全等操作符比 _.indexOf(left) > -1 快上一个数量级……100跟10的区别
-    if (_ === `0x${left}`) {
-      xmlContentInArr[currentIndex] = _.replace(left, right);
-    } else if (_ === `0x${right}`) {
-      xmlContentInArr[currentIndex] = _.replace(right, left);
+    if (_ === left) {
+      xmlContentInArr[currentIndex] = right;
+    } else if (_ === right) {
+      xmlContentInArr[currentIndex] = left;
     }
 
     currentIndex += 1;
