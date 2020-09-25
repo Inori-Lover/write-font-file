@@ -41,27 +41,48 @@ const endReadTxtFileTime = performance.now();
 console.log('3. read xml file');
 const beginReadXMLFileTime = performance.now();
 const xmlFilePath = path.resolve(__dirname, './res/font.xml');
-let xmlContent = fs.readFileSync(xmlFilePath, { encoding: 'utf8' });
+const xmlContent = fs.readFileSync(xmlFilePath, { encoding: 'utf8' });
+const xmlContentInArr = xmlContent
+  // 正则分割，用的都是断言所以不会丢失字符
+  .split(/(?<=map\scode\="0x[0-9a-f]{4})(?=")/)
+  // 正则分割
+  .map((line) => line.split(/(?<=map\scode\=")/))
+  // 把 map 导致的二层数组重新打扁
+  .flat(2);
 const endReadXMLFileTime = performance.now();
 
 console.log('4. replace');
 const beginReplaceTime = performance.now();
-const replaceFlag = `DONT_${Math.random().toFixed(15)}_REPLACE_ME`;
+
+// 初始化为一个数字有助v8判断类型，提前分配内存
+let currentIndex = 0;
+
 txtContent.split(/\n/).forEach((line) => {
+  // 复用内存
+  currentIndex = 0;
   let [left, right] = line.split(' ');
   left = Number.parseInt(left).toString(16);
   right = Number.parseInt(right).toString(16);
-  xmlContent = xmlContent
-    .replace(`${left}"`, `${right}${replaceFlag}"`)
-    .replace(`${right}"`, `${left}"`)
-    .replace(replaceFlag, '');
+  for (const _ of xmlContentInArr) {
+    // 我这里可能有理解错，我理解是line的左右互换，但原来的示例代码貌似是只有左边换成右边
+    // 全等操作符比 _.indexOf(left) > -1 快上一个数量级……100跟10的区别
+    if (_ === `0x${left}`) {
+      xmlContentInArr[currentIndex] = _.replace(left, right);
+    } else if (_ === `0x${right}`) {
+      xmlContentInArr[currentIndex] = _.replace(right, left);
+    }
+
+    currentIndex += 1;
+  }
 });
 const endReplaceTime = performance.now();
 
 console.log('5. write xml file');
 const beginWriteTime = performance.now();
 const xmlResultFilePath = path.resolve(__dirname, './res/font.result.xml');
-fs.writeFileSync(xmlResultFilePath, xmlContent, { encoding: 'utf8' });
+fs.writeFileSync(xmlResultFilePath, xmlContentInArr.join(''), {
+  encoding: 'utf8',
+});
 const endWriteTime = performance.now();
 
 const endTime = performance.now();
